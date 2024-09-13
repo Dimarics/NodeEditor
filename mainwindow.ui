@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>858</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="globalSettings" native="true">
+       <property name="styleSheet">
+        <string notr="true">#globalSettings {
+	border: 1px solid rgb(150, 150, 150);
+	background-color: white;
+}
+
+Volume {
+	qproperty-fieldWidth: 60;
+	qproperty-fieldHeight: 25;
+}
+
+QSpinBox {
+	font-size: 11pt;
+}</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Глобальные</string>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Ambient</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Volume" name="ambient" native="true"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Diffuse</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Volume" name="diffuse" native="true"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Блик</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Volume" name="specular" native="true"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Отражение</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Volume" name="shininess" native="true"/>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="EntityTree" name="entityTree">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QHeaderView {
+	font-size: 11pt;
+}
+
+/*QHeaderView::section {
+	border: 1px solid rgb(150, 150, 150);
+	background-color: white;
+	color: white;
+}*/
+
+QTreeView {
+	border: 1px solid rgb(150, 150, 150);
+	background-color: white;
+	/*color: white;
+	gridline-color: rgba(255, 255, 255, 150);
+	selection-background-color: transparent;
+	selection-color: white;*/
+}
+
+/*QTreeView::item:selected {
+	background-color: rgba(255, 255, 255, 40);
+}*/</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+      </widget>
+      <widget class="PropertyTree" name="properyTree">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QHeaderView {
+	font-size: 11pt;
+}
+
+QTreeView {
+	border: 1px solid rgb(150, 150, 150);
+	background-color: white;
+}</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>858</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <widget class="QMenu" name="file">
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="open"/>
+    <addaction name="saveAs"/>
+   </widget>
+   <widget class="QMenu" name="window">
+    <property name="title">
+     <string>Окно</string>
+    </property>
+    <addaction name="globalSettingsVisible"/>
+    <addaction name="entityTreeVisible"/>
+    <addaction name="propertyVision"/>
+   </widget>
+   <addaction name="file"/>
+   <addaction name="window"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="open">
+   <property name="text">
+    <string>Открыть</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="globalSettingsVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Глобальные настройки</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="entityTreeVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Древо сущностей</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="propertyVision">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Свойства</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="saveAs">
+   <property name="text">
+    <string>Сохранить как</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Volume</class>
+   <extends>QWidget</extends>
+   <header>../QtExtras/volume.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PropertyTree</class>
+   <extends>QTreeView</extends>
+   <header>propertytree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EntityTree</class>
+   <extends>QTreeView</extends>
+   <header>entitytree.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
