@@ -9,6 +9,10 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    qputenv("QT3D_RENDERER", "opengl");
+    //qputenv("QT3D_RENDERER", "rhi");
+    //qputenv("QSG_RHI_BACKEND", "vulkan");
+
     MainWindow window;
     window.showMaximized();
 

@@ -1,9 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "view3d.h"
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QItemDelegate>
+
 #include <Qt3DRender/QSceneLoader>
 
 QT_BEGIN_NAMESPACE
@@ -17,10 +19,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void drawLine(const QVector3D& p1, const QVector3D& p2, const QColor& color, Qt3DCore::QEntity *root);
 
 private:
     Ui::MainWindow *ui;
-    Qt3DCore::QEntity *m_rootEntity;
 };
 
 #endif // MAINWINDOW_H

@@ -34,27 +34,22 @@ CameraController::CameraController(QNode *parent) :
     m_leftButtonInput->setButtons({Qt::LeftButton});
     m_leftButtonInput->setSourceDevice(m_mouseDevice);
     m_leftButtonAction->addInput(m_leftButtonInput);
-    m_leftButtonAction->setObjectName("Left_Button");
 
     m_keyUpInput->setButtons({Qt::Key_Up});
     m_keyUpInput->setSourceDevice(m_keyboardDevice);
     m_keyUpAction->addInput(m_keyUpInput);
-    m_keyUpAction->setObjectName("Key_Up");
 
     m_mouseXInput->setAxis(Qt3DInput::QMouseDevice::X);
     m_mouseXInput->setSourceDevice(m_mouseDevice);
     m_xAxis->addInput(m_mouseXInput);
-    m_xAxis->setObjectName("Axis_X");
 
     m_mouseYInput->setAxis(Qt3DInput::QMouseDevice::Y);
     m_mouseYInput->setSourceDevice(m_mouseDevice);
     m_yAxis->addInput(m_mouseYInput);
-    m_yAxis->setObjectName("Axis_Y");
 
     m_wheelAxisInput->setAxis(Qt3DInput::QMouseDevice::WheelY);
     m_wheelAxisInput->setSourceDevice(m_mouseDevice);
     m_wheelAxis->addInput(m_wheelAxisInput);
-    m_wheelAxis->setObjectName("Axis_Wheel");
     //m_mouseDevice->setUpdateAxesContinuously(true);
 
     m_logicalDevice->addAction(m_keyUpAction);
@@ -63,11 +58,21 @@ CameraController::CameraController(QNode *parent) :
     m_logicalDevice->addAxis(m_yAxis);
     m_logicalDevice->addAxis(m_wheelAxis);
 
-    connect(m_keyUpAction, &Qt3DInput::QAction::activeChanged, this, &CameraController::activeChanged);
-    connect(m_leftButtonAction, &Qt3DInput::QAction::activeChanged, this, &CameraController::activeChanged);
-    connect(m_xAxis, &Qt3DInput::QAxis::valueChanged, this, &CameraController::valueChanged);
-    connect(m_yAxis, &Qt3DInput::QAxis::valueChanged, this, &CameraController::valueChanged);
-    connect(m_wheelAxis, &Qt3DInput::QAxis::valueChanged, this, &CameraController::valueChanged);
+    connect(m_keyUpAction, &Qt3DInput::QAction::activeChanged, this, [this](bool active)
+            {
+                m_keyUpPressed = active;
+            });
+    connect(m_leftButtonAction, &Qt3DInput::QAction::activeChanged, this, [this](bool active)
+            {
+                m_leftButtonPressed = active;
+            });
+    connect(m_xAxis, &Qt3DInput::QAxis::valueChanged, this, [this](float value){ m_dx = value; });
+    connect(m_yAxis, &Qt3DInput::QAxis::valueChanged, this, [this](float value){ m_dy = value; });
+    connect(m_wheelAxis, &Qt3DInput::QAxis::valueChanged, this, [this](float value)
+            {
+                m_scale = value > 0 ? 1.25 : value < 0 ? 0.8 : 1;
+                m_camera->setPosition(m_camera->position() * m_scale);
+            });
     connect(m_frameAction, &Qt3DLogic::QFrameAction::triggered, this, &CameraController::frameActionTriggered);
 
     connect(this, &Qt3DCore::QEntity::enabledChanged, m_logicalDevice, &Qt3DInput::QLogicalDevice::setEnabled);
@@ -98,28 +103,6 @@ float CameraController::lookSpeed() const
 void CameraController::setLinearSpeed(float linearSpeed)
 {
     m_linearSpeed = linearSpeed;
-}
-
-void CameraController::activeChanged(bool isActive)
-{
-    if (sender()->objectName() == "Key_Up")
-        m_keyUpPressed = isActive;
-    else if (sender()->objectName() == "Left_Button")
-        m_leftButtonPressed = isActive;
-}
-
-void CameraController::valueChanged(float value)
-{
-    if (sender() == m_xAxis)
-        m_dx = value;
-    else if (sender() == m_yAxis)
-        m_dy = value;
-    else if (sender() == m_wheelAxis)
-    {
-        m_scale = value > 0 ? 1.25 : value < 0 ? 0.8 : 1;
-        //qDebug() << value;
-        m_camera->setPosition(m_camera->position() * m_scale);
-    }
 }
 
 void CameraController::frameActionTriggered(float dt)

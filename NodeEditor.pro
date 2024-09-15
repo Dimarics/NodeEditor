@@ -4,7 +4,8 @@ QT += core \
     3drender \
     3dinput \
     3dlogic \
-    3dextras
+    3dextras \
+    widgets-private
 
 CONFIG += c++17
 #CONFIG += resources_big
@@ -17,7 +18,8 @@ SOURCES += \
     entitytree.cpp \
     main.cpp \
     mainwindow.cpp \
-    propertytree.cpp
+    propertytree.cpp \
+    view3d.cpp
 
 HEADERS += \
     ../QtExtras/datastream3d.h \
@@ -26,7 +28,8 @@ HEADERS += \
     entityshell.h \
     entitytree.h \
     mainwindow.h \
-    propertytree.h
+    propertytree.h \
+    view3d.h
 
 FORMS += \
     mainwindow.ui

@@ -52,8 +52,6 @@ private:
     Qt3DRender::QCamera *m_camera;
 
 protected slots:
-    void activeChanged(bool isActive);
-    void valueChanged(float value);
     void frameActionTriggered(float dt);
 };
 
