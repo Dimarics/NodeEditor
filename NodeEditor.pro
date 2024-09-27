@@ -1,36 +1,35 @@
-QT += core \
+include (QtExtras.pri)
+include (src/src.pri)
+
+CONFIG += c++17
+
+QT += \
+    core \
     widgets \
-    gui 3dcore \
+    gui \
+    3dcore \
     3drender \
     3dinput \
     3dlogic \
     3dextras
 
-CONFIG += c++17
-#CONFIG += resources_big
 
-SOURCES += \
-    ../QtExtras/datastream3d.cpp \
-    ../QtExtras/volume.cpp \
-    cameracontroller.cpp \
-    entityshell.cpp \
-    entitytree.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    propertytree.cpp
+CONFIG(debug, debug|release) {
+    BUILD_FLAG = debug
+    LIB_SUFFIX = d
+}
+else {
+    BUILD_FLAG = release
+}
+
+#win32: OS_SUFFIX = win32
+#linux-g++: OS_SUFFIX = linux
+
+#LIBS_PATH = $${PWD}/lib.$${OS_SUFFIX}/
+BIN_PATH = $${PWD}/bin/$${BUILD_FLAG}/
+#BUILD_PATH = $${PWD}/build/$${BUILD_FLAG}/$${TARGET}/
+
+TEMPLATE = app
 
 HEADERS += \
-    ../QtExtras/datastream3d.h \
-    ../QtExtras/volume.h \
-    cameracontroller.h \
-    entityshell.h \
-    entitytree.h \
-    mainwindow.h \
-    propertytree.h
-
-FORMS += \
-    mainwindow.ui
-
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+    ../QtExtras/dimath.h

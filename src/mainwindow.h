@@ -1,9 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+//#include <view3d.h>
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QItemDelegate>
+
 #include <Qt3DRender/QSceneLoader>
 
 QT_BEGIN_NAMESPACE
@@ -20,7 +22,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    Qt3DCore::QEntity *m_rootEntity;
 };
 
 #endif // MAINWINDOW_H

@@ -1,29 +1,19 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "cameracontroller.h"
-#include "..\QtExtras\DataStream3d.h"
+#include "datastream3d.h"
 
 #include <QFileDialog>
 #include <QStandardPaths>
 
-#include <Qt3DExtras/Qt3DWindow>
-#include <Qt3DExtras/QForwardRenderer>
-#include <Qt3DExtras/QOrbitCameraController>
-#include <Qt3DRender/QRenderSettings>
-#include <Qt3DRender/QCamera>
-#include <Qt3DRender/QDirectionalLight>
-
 #include <Qt3DExtras/QPhongMaterial>
 #include <Qt3DExtras/QDiffuseSpecularMaterial>
 #include <Qt3DExtras/QTorusMesh>
-
+#include <Qt3DExtras/QPlaneMesh>
 
 #include <Qt3DRender/QObjectPicker>
 #include <Qt3DRender/QPickEvent>
-#include <Qt3DRender/QScreenRayCaster>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),
-    m_rootEntity(new Qt3DCore::QEntity)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     connect(ui->globalSettingsVisible, &QAction::triggered, ui->globalSettings, &QWidget::setVisible);
@@ -100,52 +90,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     });
 
     // Сцена
-    Qt3DExtras::Qt3DWindow *view = new Qt3DExtras::Qt3DWindow();
-    view->renderSettings()->setRenderPolicy(Qt3DRender::QRenderSettings::OnDemand);
-    view->defaultFrameGraph()->setClearColor(QColor(33, 40, 48));
-    view->setRootEntity(m_rootEntity);
-    view->renderSettings()->pickingSettings()->setPickMethod(Qt3DRender::QPickingSettings::PickMethod::TrianglePicking);
-    //view->renderSettings()->pickingSettings()->setPickMethod(Qt3DRender::QPickingSettings::PrimitivePicking);
-    //view->renderSettings()->pickingSettings()->setPickResultMode(Qt3DRender::QPickingSettings::NearestPick);
-    QWidget *container = QWidget::createWindowContainer(view);
-    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    ui->splitter->addWidget(container);
-
-    Qt3DRender::QObjectPicker *objectPicker = new Qt3DRender::QObjectPicker(m_rootEntity);
+    /*Qt3DRender::QObjectPicker *objectPicker = new Qt3DRender::QObjectPicker(ui->viewPort->rootEntity());
     objectPicker->setDragEnabled(true);
-    m_rootEntity->addComponent(objectPicker);
+    ui->viewPort->rootEntity()->addComponent(objectPicker);
     connect(objectPicker, &Qt3DRender::QObjectPicker::pressed,
             this, [this](Qt3DRender::QPickEvent *pick)
     {
+        qDebug() << pick->worldIntersection().project(m_view->camera()->viewMatrix(),
+                                                      m_view->camera()->projectionMatrix(),
+                                                      QRect(0, 0, width(), height()));
         for (EntityShell *entityShell : ui->entityTree->entities())
         {
             if (entityShell->entity() == pick->entity())
                 ui->properyTree->setEntity(entityShell);
         }
-    });
-
-    // Настройки камеры
-    Qt3DRender::QCamera *camera = view->camera();
-    camera->setViewCenter(QVector3D(0, 0, 0));
-    camera->setPosition(QVector3D(0, 0, 1000));
-    camera->lens()->setPerspectiveProjection(20.f, qreal(view->width()) / qreal(view->height()), 1.f, 100000.f);
-    //camera->setFarPlane(3.40282e+38);
-    //Qt3DExtras::QOrbitCameraController *cameraController = new Qt3DExtras::QOrbitCameraController(m_rootEntity);
-    CameraController *cameraController = new CameraController(m_rootEntity);
-    cameraController->setCamera(camera);
-    //cameraController->setLookSpeed(500);
-    //cameraController->setLinearSpeed(500);
-
-    // Свет
-    Qt3DRender::QDirectionalLight *light = new Qt3DRender::QDirectionalLight(m_rootEntity);
-    light->setWorldDirection(QVector3D(0, 0, -1));
-    light->setIntensity(1);
-    m_rootEntity->addComponent(light);
-    connect(camera, &Qt3DRender::QCamera::viewVectorChanged, this, [light](const QVector3D &viewVector)
-    {
-        light->setWorldDirection(viewVector);
-    });
-    //m_light->setWorldDirection(m_camera->viewVector());
+    });*/
 
     // Загрузчик
     //sceneLoader->setSource(QUrl("qrc:/meshes/platform.obj"));
@@ -153,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //m_loader = new Qt3DRender::QSceneLoader(m_rootEntity);
     //m_rootEntity->addComponent(m_loader);
 
-    Qt3DCore::QEntity *loaderEntity = new Qt3DCore::QEntity(m_rootEntity);
+    Qt3DCore::QEntity *loaderEntity = new Qt3DCore::QEntity(ui->viewPort->rootEntity());
     //Qt3DCore::QEntity *loaderEntity = new Qt3DCore::QEntity;
     connect(ui->open, &QAction::triggered, this, [loaderEntity, this]
     {
@@ -183,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                 if (status != Qt3DRender::QSceneLoader::Ready) return;
                 Qt3DCore::QEntity *root = qobject_cast<Qt3DCore::QEntity*>(loaderEntity->childNodes().last());
                 root->setObjectName(loader->source().fileName());
+                new Joint(root);
                 ui->entityTree->setRoot(root);
             });
         }
@@ -198,24 +158,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         DataStream3D::writeDMG(path, loaderEntity);
     });
 
-    /*Qt3DCore::QEntity *torusEntity = new Qt3DCore::QEntity(m_rootEntity);
-    torusEntity->setObjectName("torus");
-    Qt3DExtras::QTorusMesh *torusMesh = new Qt3DExtras::QTorusMesh(torusEntity);
-    torusMesh->setRadius(15);
-    torusMesh->setMinorRadius(6);
-    torusMesh->setSlices(16);
-    torusMesh->setRings(32);
-    Qt3DExtras::QDiffuseSpecularMaterial *torusMaterial = new Qt3DExtras::QDiffuseSpecularMaterial(torusEntity);
-    torusMaterial->setAmbient(Qt::black);
-    torusMaterial->setDiffuse(QColor(0, 255, 0));
-    Qt3DCore::QTransform *torusTransform = new Qt3DCore::QTransform(torusEntity);
-    torusEntity->addComponent(torusMesh);
-    torusEntity->addComponent(torusMaterial);
-    torusEntity->addComponent(torusTransform);*/
+    //drawLine(QVector3D(-500, 0, 0), QVector3D(500, 0, 0), QColor(255, 0, 0), ui->viewPort->rootEntity());
+    ui->viewPort->mapToWorld(qreal(width()) / 2.f, qreal(height()) / 2.f);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete m_rootEntity;
 }

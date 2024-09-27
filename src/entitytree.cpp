@@ -47,45 +47,7 @@ void EntityTree::buildBrunch(EntityShell *root)
         root->appendRow(childTreeItem);
         buildBrunch(childTreeItem);
     }
-    /*if (!treeItem->data(Qt::UserRole).canConvert<Qt3DCore::QNode*>()) return;
-    Qt3DCore::QNode *node = treeItem->data(Qt::UserRole).value<Qt3DCore::QNode*>();
-    for (Qt3DCore::QNode *childNode : node->childNodes())
-    {
-        if (!qobject_cast<Qt3DCore::QEntity*>(childNode)) continue;
-
-        QStandardItem *childTreeItem = new QStandardItem;
-        treeItem->appendRow(childTreeItem);
-        QString name = childNode->objectName();
-        if (name.isEmpty()) name = "<без имени>";
-        childTreeItem->setText(name);
-        for (Qt3DCore::QComponent *component : qobject_cast<Qt3DCore::QEntity*>(childNode)->components())
-        {
-            if (qobject_cast<Qt3DExtras::QPhongMaterial*>(component))
-            {
-                Qt3DExtras::QPhongMaterial *phongMaterial = qobject_cast<Qt3DExtras::QPhongMaterial*>(component);
-                Qt3DExtras::QDiffuseSpecularMaterial *diffuseSpecularMaterial = new Qt3DExtras::QDiffuseSpecularMaterial;
-                diffuseSpecularMaterial->setAmbient(phongMaterial->ambient());
-                diffuseSpecularMaterial->setDiffuse(phongMaterial->diffuse());
-                diffuseSpecularMaterial->setSpecular(phongMaterial->specular());
-                diffuseSpecularMaterial->setShininess(phongMaterial->shininess());
-                Qt3DCore::QEntity *entity = qobject_cast<Qt3DCore::QEntity*>(childNode);
-                entity->removeComponent(phongMaterial);
-                entity->addComponent(diffuseSpecularMaterial);
-            }
-        }
-
-        QVariant data;
-        data.setValue(childNode);
-        childTreeItem->setData(data, Qt::UserRole);
-
-        addElements(childTreeItem);
-    }*/
 }
-
-/*void EntityTree::renameCurrent(const QString &name)
-{
-    m_currentItem->setText(name);
-}*/
 
 void EntityTree::clear()
 {

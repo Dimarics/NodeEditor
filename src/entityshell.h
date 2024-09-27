@@ -31,6 +31,16 @@ public:
     QColor originalSpecular() const;
     Qt3DCore::QEntity *entity();
 
+    //
+    void setOriginPoint(const QVector3D &p)
+    {
+        m_originPoint = p;
+    }
+    void rotate(const QQuaternion &rotation)
+    {
+        m_transform->setRotation(m_transform->rotation() * rotation);
+    }
+
 private:
     float m_originalShininess;
     QColor m_originalAmbient;
@@ -40,6 +50,10 @@ private:
     Qt3DCore::QTransform *m_transform;
     Qt3DRender::QGeometryRenderer *m_geometryRender;
     Qt3DExtras::QDiffuseSpecularMaterial *m_material;
+
+    //
+    QVector3D m_originPoint;
+    QVector3D m_rotateAxis;
 };
 
 #endif // ENTITYSHELL_H

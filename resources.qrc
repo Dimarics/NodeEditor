@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>meshes/platform.mtl</file>
-        <file>meshes/platform.obj</file>
-        <file>meshes/base.stl</file>
-    </qresource>
-</RCC>

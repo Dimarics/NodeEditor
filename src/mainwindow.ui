@@ -18,7 +18,7 @@
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <widget class="QWidget" name="globalSettings" native="true">
        <property name="styleSheet">
@@ -118,7 +118,7 @@ QSpinBox {
         <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -167,10 +167,10 @@ QTreeView {
 }*/</string>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Shape::NoFrame</enum>
        </property>
        <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
+        <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
        </property>
       </widget>
       <widget class="PropertyTree" name="properyTree">
@@ -196,10 +196,18 @@ QTreeView {
 }</string>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Shape::NoFrame</enum>
        </property>
        <property name="editTriggers">
-        <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+        <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed</set>
+       </property>
+      </widget>
+      <widget class="View3D" name="viewPort" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </widget>
@@ -212,7 +220,7 @@ QTreeView {
      <x>0</x>
      <y>0</y>
      <width>858</width>
-     <height>25</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
@@ -312,7 +320,7 @@ QTreeView {
   <customwidget>
    <class>Volume</class>
    <extends>QWidget</extends>
-   <header>../QtExtras/volume.h</header>
+   <header>volume.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -324,6 +332,12 @@ QTreeView {
    <class>EntityTree</class>
    <extends>QTreeView</extends>
    <header>entitytree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>View3D</class>
+   <extends>QWidget</extends>
+   <header>view3d.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
