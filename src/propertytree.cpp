@@ -1,14 +1,7 @@
 #include "propertytree.h"
+#include "propertydelegate.h"
 
-#include <QHeaderView>
-#include <QMetaProperty>
-
-#include <QPainter>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QColorDialog>
-#include <QLineEdit>
-#include <QSpinBox>
+//#include <QHeaderView>
 
 PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
     m_model(new QStandardItemModel),
@@ -27,6 +20,7 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
     m_specularRed(new QStandardItem),
     m_specularGreen(new QStandardItem),
     m_specularBlue(new QStandardItem),
+    m_shininess(new QStandardItem),
     m_transparency(new QStandardItem)
 {
     setModel(m_model);
@@ -89,6 +83,11 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
     m_specularBlue->setData(ByteEditor, EditorType);
     specularSection->appendRow({new QStandardItem("Синий"), m_specularBlue});
 
+    // Блеск
+    QStandardItem *shininessSection = new QStandardItem("Блеск");
+    m_shininess->setData(IntEditor, EditorType);
+    m_materialSection->appendRow({shininessSection, m_shininess});
+
     // Прозрачность
     QStandardItem *transparencySection = new QStandardItem("Прозрачность");
     m_transparency->setData(ByteEditor, EditorType);
@@ -98,10 +97,10 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
     setEntity(nullptr);
 
     // Делегат
-    PropertyTreeDelegate *delegate = new PropertyTreeDelegate;
+    PropertyDelegate *delegate = new PropertyDelegate;
     setItemDelegate(delegate);
     //connect(m_model, &QStandardItemModel::itemChanged, this, [this](QStandardItem *item)
-    connect(delegate, &PropertyTreeDelegate::editingFinished, this, [this](QStandardItem *item)
+    connect(delegate, &PropertyDelegate::editingFinished, this, [this](QStandardItem *item)
     {
         if (item == m_entityName)
         {
@@ -111,7 +110,7 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
 
         else if (item == m_ambientColor)
         {
-            QColor color = m_ambientColor->data(PropertyTree::ColorType).value<QColor>();
+            QColor color = m_ambientColor->data(ColorType).value<QColor>();
             m_entityShell->setAmbient(color);
             m_ambientRed->setText(QString::number(color.red()));
             m_ambientGreen->setText(QString::number(color.green()));
@@ -123,13 +122,13 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
             int g = m_ambientGreen->data(Qt::DisplayRole).toInt();
             int b = m_ambientBlue->data(Qt::DisplayRole).toInt();
             QColor color(r, g, b);
-            PropertyTreeDelegate::setItemColor(m_ambientColor, color);
+            PropertyDelegate::setItemColor(m_ambientColor, color);
             m_entityShell->setAmbient(color);
         }
 
         else if (item == m_ambientColor)
         {
-            QColor color = m_ambientColor->data(PropertyTree::ColorType).value<QColor>();
+            QColor color = m_ambientColor->data(ColorType).value<QColor>();
             m_entityShell->setAmbient(color);
             m_ambientRed->setText(QString::number(color.red()));
             m_ambientGreen->setText(QString::number(color.green()));
@@ -141,13 +140,13 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
             int g = m_ambientGreen->data(Qt::DisplayRole).toInt();
             int b = m_ambientBlue->data(Qt::DisplayRole).toInt();
             QColor color(r, g, b);
-            PropertyTreeDelegate::setItemColor(m_ambientColor, color);
+            PropertyDelegate::setItemColor(m_ambientColor, color);
             m_entityShell->setAmbient(color);
         }
 
         else if (item == m_diffuseColor)
         {
-            QVariant var = m_diffuseColor->data(PropertyTree::ColorType);
+            QVariant var = m_diffuseColor->data(ColorType);
             QColor color = var.value<QColor>();
             color.setAlpha(m_transparency->data(Qt::DisplayRole).toInt());
             m_entityShell->setDiffuse(color);
@@ -162,13 +161,13 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
             int b = m_diffuseBlue->data(Qt::DisplayRole).toInt();
             int a = m_transparency->data(Qt::DisplayRole).toInt();
             QColor color(r, g, b, a);
-            PropertyTreeDelegate::setItemColor(m_diffuseColor, color);
+            PropertyDelegate::setItemColor(m_diffuseColor, color);
             m_entityShell->setDiffuse(color);
         }
 
         else if (item == m_specularColor)
         {
-            QVariant var = m_specularColor->data(PropertyTree::ColorType);
+            QVariant var = m_specularColor->data(ColorType);
             QColor color = var.value<QColor>();
             m_entityShell->setSpecular(color);
             m_specularRed->setText(QString::number(color.red()));
@@ -181,8 +180,13 @@ PropertyTree::PropertyTree(QWidget *parent) : QTreeView(parent),
             int g = m_specularGreen->data(Qt::DisplayRole).toInt();
             int b = m_specularBlue->data(Qt::DisplayRole).toInt();
             QColor color(r, g, b);
-            PropertyTreeDelegate::setItemColor(m_specularColor, color);
+            PropertyDelegate::setItemColor(m_specularColor, color);
             m_entityShell->setSpecular(color);
+        }
+
+        else if (item == m_shininess)
+        {
+            m_entityShell->setShininess(m_shininess->data(Qt::DisplayRole).toInt());
         }
 
         else if (item == m_transparency)
@@ -208,22 +212,24 @@ void PropertyTree::setEntity(EntityShell *entityShell)
     {
         setSectionHidden(m_materialSection, false);
 
-        PropertyTreeDelegate::setItemColor(m_ambientColor, m_entityShell->ambient());
+        PropertyDelegate::setItemColor(m_ambientColor, m_entityShell->ambient());
         //m_ambientColor->setData(m_material->ambient(), ColorType);
         m_ambientRed->setText(QString::number(m_entityShell->ambient().red()));
         m_ambientGreen->setText(QString::number(m_entityShell->ambient().green()));
         m_ambientBlue->setText(QString::number(m_entityShell->ambient().blue()));
 
-        PropertyTreeDelegate::setItemColor(m_diffuseColor, m_entityShell->diffuse());
+        PropertyDelegate::setItemColor(m_diffuseColor, m_entityShell->diffuse());
         m_diffuseRed->setText(QString::number(m_entityShell->diffuse().red()));
         m_diffuseGreen->setText(QString::number(m_entityShell->diffuse().green()));
         m_diffuseBlue->setText(QString::number(m_entityShell->diffuse().blue()));
 
-        PropertyTreeDelegate::setItemColor(m_specularColor, m_entityShell->specular());
+        PropertyDelegate::setItemColor(m_specularColor, m_entityShell->specular());
         m_specularColor->setData(m_entityShell->specular(), ColorType);
         m_specularRed->setText(QString::number(m_entityShell->specular().red()));
         m_specularGreen->setText(QString::number(m_entityShell->specular().green()));
         m_specularBlue->setText(QString::number(m_entityShell->specular().blue()));
+
+        m_shininess->setText(QString::number(m_entityShell->shininess()));
 
         m_transparency->setText(QString::number(m_entityShell->diffuse().alpha()));
     }
@@ -270,20 +276,20 @@ void PropertyTree::setEntity(EntityShell *entityShell)
             setSectionHidden(m_materialSection, false);
             m_material = qobject_cast<Qt3DExtras::QDiffuseSpecularMaterial*>(component);
 
-            PropertyTreeDelegate::setItemColor(m_ambientColor, m_material->ambient());
+            PropertyDelegate::setItemColor(m_ambientColor, m_material->ambient());
             //m_ambientColor->setData(m_material->ambient(), ColorType);
             m_ambientRed->setText(QString::number(m_material->ambient().red()));
             m_ambientGreen->setText(QString::number(m_material->ambient().green()));
             m_ambientBlue->setText(QString::number(m_material->ambient().blue()));
 
             QColor diffuse = m_material->diffuse().value<QColor>();
-            PropertyTreeDelegate::setItemColor(m_diffuseColor, m_material->diffuse());
+            PropertyDelegate::setItemColor(m_diffuseColor, m_material->diffuse());
             m_diffuseRed->setText(QString::number(diffuse.red()));
             m_diffuseGreen->setText(QString::number(diffuse.green()));
             m_diffuseBlue->setText(QString::number(diffuse.blue()));
 
             QColor specular = m_material->specular().value<QColor>();
-            PropertyTreeDelegate::setItemColor(m_specularColor, m_material->specular());
+            PropertyDelegate::setItemColor(m_specularColor, m_material->specular());
             m_specularColor->setData(m_material->specular(), ColorType);
             m_specularRed->setText(QString::number(specular.red()));
             m_specularGreen->setText(QString::number(specular.green()));
@@ -316,7 +322,7 @@ void PropertyTree::setSectionHidden(QStandardItem *item, bool hide)
     QStandardItem *colorProperty = new QStandardItem(name);
 
     QStandardItem *colorValue = new QStandardItem(color.name());
-    PropertyTreeDelegate::setColorIcon(colorValue, color);
+    PropertyDelegate::setColorIcon(colorValue, color);
     colorValue->setData(id, PropertyType);
     colorValue->setData(ColorEditor, EditorType);
     colorValue->setData(color, ColorType);
@@ -337,101 +343,3 @@ void PropertyTree::setSectionHidden(QStandardItem *item, bool hide)
     blue->setData(ByteEditor, EditorType);
     colorProperty->appendRow({new QStandardItem("Синий"), blue});
 }*/
-
-// Делегат
-void PropertyTreeDelegate::setItemColor(QStandardItem *item, const QColor &color)
-{
-    if (color.isValid())
-    {
-        item->setData(color, PropertyTree::ColorType);
-        item->setText(QString("%1, %2, %3").arg(color.red()).arg(color.green()).arg(color.blue()));
-        setColorIcon(item, color);
-    }
-}
-
-void PropertyTreeDelegate::setItemColor(QStandardItem *item, const QVariant &var)
-{
-    setItemColor(item, var.value<QColor>());
-}
-
-void PropertyTreeDelegate::setColorIcon(QStandardItem *item, const QColor &color)
-{
-    QPixmap pixmap(14, 14);
-    QPainter painter(&pixmap);
-    painter.setPen(Qt::black);
-    painter.setBrush(color);
-    painter.drawRect(0, 0, pixmap.width() - 1, pixmap.height() - 1);
-    item->setIcon(pixmap);
-}
-
-void PropertyTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    QStyleOptionViewItem item_option(option);
-    if (item_option.state & QStyle::State_HasFocus)
-        item_option.state = item_option.state ^ QStyle::State_HasFocus;
-    QItemDelegate::paint(painter, item_option, index);
-}
-
-void PropertyTreeDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-    QByteArray n = editor->metaObject()->userProperty().name();
-    if (!n.isEmpty()) model->setData(index, editor->property(n), Qt::EditRole);
-    emit const_cast<PropertyTreeDelegate*>(this)->
-            editingFinished(qobject_cast<QStandardItemModel*>(model)->itemFromIndex(index));
-}
-
-QWidget* PropertyTreeDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem&, const QModelIndex &index) const
-{
-    if (!index.data(PropertyTree::EditorType).canConvert<uint>())
-        return nullptr;
-    switch (index.data(PropertyTree::EditorType).toUInt())
-    {
-    case PropertyTree::TextEditor:
-    {
-        QLineEdit *lineEdit = new QLineEdit(parent);
-        return lineEdit;
-    }
-        break;
-
-    case PropertyTree::ColorEditor:
-    {
-        QWidget *colorCell = new QWidget(parent);
-        QHBoxLayout *layout = new QHBoxLayout(colorCell);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->setSpacing(0);
-        layout->addStretch();
-        colorCell->setLayout(layout);
-
-        QPushButton *dialogButton = new QPushButton("...", colorCell);
-        //dialogButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        dialogButton->setFixedWidth(20);
-        layout->addWidget(dialogButton);
-
-        QStandardItem *item = qobject_cast<const QStandardItemModel*>(index.model())->itemFromIndex(index);
-
-        connect(dialogButton, &QPushButton::clicked, this, [this, item]
-        {
-            QColor color = QColorDialog::getColor(item->data(PropertyTree::ColorType).value<QColor>());
-            if (color.isValid())
-            {
-                setItemColor(item, color);
-                emit const_cast<PropertyTreeDelegate*>(this)->editingFinished(item);
-            }
-        });
-        return colorCell;
-    }
-        break;
-
-    case PropertyTree::ByteEditor:
-    {
-        QSpinBox *comboBox = new QSpinBox(parent);
-        comboBox->setMinimum(0);
-        comboBox->setMaximum(255);
-        return comboBox;
-    }
-        break;
-    default:
-        break;
-    }
-    return nullptr;
-}

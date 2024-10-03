@@ -1,4 +1,5 @@
 SOURCES += \
+    $$PWD/propertydelegate.cpp \
     $${PWD}/entityshell.cpp \
     $${PWD}/entitytree.cpp \
     $${PWD}/main.cpp \
@@ -6,6 +7,7 @@ SOURCES += \
     $${PWD}/propertytree.cpp
 
 HEADERS += \
+    $$PWD/propertydelegate.h \
     $${PWD}/entityshell.h \
     $${PWD}/entitytree.h \
     $${PWD}/mainwindow.h \

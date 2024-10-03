@@ -30,6 +30,9 @@ public:
     QColor originalDiffuse() const;
     QColor originalSpecular() const;
     Qt3DCore::QEntity *entity();
+    Qt3DCore::QTransform *transform();
+    Qt3DRender::QGeometryRenderer *geometryRender();
+    Qt3DExtras::QDiffuseSpecularMaterial *material();
 
     //
     void setOriginPoint(const QVector3D &p)

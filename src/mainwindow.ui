@@ -20,6 +20,9 @@
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
       <widget class="QWidget" name="globalSettings" native="true">
        <property name="styleSheet">
         <string notr="true">#globalSettings {
@@ -63,7 +66,7 @@ QSpinBox {
            </font>
           </property>
           <property name="text">
-           <string>Ambient</string>
+           <string>Яркость</string>
           </property>
          </widget>
         </item>
@@ -78,7 +81,7 @@ QSpinBox {
            </font>
           </property>
           <property name="text">
-           <string>Diffuse</string>
+           <string>Цвет</string>
           </property>
          </widget>
         </item>

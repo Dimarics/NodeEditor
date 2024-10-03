@@ -31,5 +31,4 @@ BIN_PATH = $${PWD}/bin/$${BUILD_FLAG}/
 
 TEMPLATE = app
 
-HEADERS += \
-    ../QtExtras/dimath.h
+HEADERS +=

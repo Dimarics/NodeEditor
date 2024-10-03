@@ -133,3 +133,18 @@ Qt3DCore::QEntity *EntityShell::entity()
 {
     return m_entity;
 }
+
+Qt3DCore::QTransform *EntityShell::transform()
+{
+    return m_transform;
+}
+
+Qt3DRender::QGeometryRenderer *EntityShell::geometryRender()
+{
+    return m_geometryRender;
+}
+
+Qt3DExtras::QDiffuseSpecularMaterial *EntityShell::material()
+{
+    return m_material;
+}
