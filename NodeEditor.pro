@@ -1,7 +1,7 @@
 include (QtExtras.pri)
 include (src/src.pri)
 
-CONFIG += c++17
+CONFIG += c++20
 
 QT += \
     core \

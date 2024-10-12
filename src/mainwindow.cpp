@@ -98,41 +98,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /*Qt3DRender::QObjectPicker *objectPicker = new Qt3DRender::QObjectPicker(ui->viewPort->rootEntity());
     objectPicker->setDragEnabled(true);*/
 
-    connect(ui->viewPort, &View3D::objectChanged, this, [this](Qt3DRender::QPickEvent *pick)
+    connect(ui->viewPort, &View3D::objectChanged, this, [this](Qt3DCore::QEntity *entity)
     {
         for (EntityShell *entityShell : ui->entityTree->entities())
         {
-            if (entityShell->entity() == pick->entity())
+            if (entityShell->entity() == entity)
             {
                 ui->properyTree->setEntity(entityShell);
-                for (Qt3DCore::QAttribute *attrib : entityShell->geometryRender()->geometry()->attributes())
-                {
-                    if (attrib->name() == Qt3DCore::QAttribute::defaultPositionAttributeName())
-                    {
-                        float *positions = reinterpret_cast<float*>(attrib->buffer()->data().data());
-                        for (uint i = 0; i < attrib->count() / 3; ++i)
-                        {
-                            QVector3D p1, p2, p3;
-                            p1.setX(*positions++);
-                            p1.setY(*positions++);
-                            p1.setZ(*positions++);
-
-                            positions += 3;
-
-                            p2.setX(*positions++);
-                            p2.setY(*positions++);
-                            p2.setZ(*positions++);
-
-                            positions += 3;
-
-                            p3.setX(*positions++);
-                            p3.setY(*positions++);
-                            p3.setZ(*positions++);
-
-                            positions += 3;
-                        }
-                    }
-                }
             }
         }
     });
@@ -175,14 +147,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                     if (status != Qt3DRender::QSceneLoader::Ready) return;
                     Qt3DCore::QEntity *root = qobject_cast<Qt3DCore::QEntity*>(loaderEntity->childNodes().last());
                     root->setObjectName(loader->source().fileName());
-                    new Joint(root);
+                    Joint *joint = new Joint(root);
+                    joint->transform()->setRotationX(10);
+                    joint->transform()->setRotationY(20);
+                    joint->transform()->setRotationZ(30);
                     ui->entityTree->setRoot(root);
                     emit ui->ambient->valueChanged(ui->ambient->value());
 
-                    if (loader->entity("Твердое тело2:54"))
+                    if (loader->entity("Твердое тело1:85"))
                     {
-                        Joint *joint = new Joint(loader->entity("Твердое тело2:54"));
-                        joint->setRotationAxis(QVector3D(0, 1, 0));
+                        //loader->entity("Твердое тело1:85")->addComponent(joint);
+                        Joint *joint_2 = new Joint(loader->entity("Твердое тело1:85"));
+                        joint_2->setRotationAxis(QVector3D(0, 1, 0));
+                        joint_2->setOriginPoint(QVector3D(0, 0, 110.25));
                     }
                 });
             }
